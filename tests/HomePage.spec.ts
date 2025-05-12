@@ -1,8 +1,9 @@
 import { test, expect } from '../fixtures/plum.fixtures.ts';
 
 test.describe('Home Page Tests for Plum Goodness', () => {
-    test.beforeEach(async ({ homePage }) => {
+    test.beforeEach(async ({ homePage, iframePopUp }) => {
         await homePage.userNavigatesToHomePage();
+        await iframePopUp.closePopupIframes();
     });
 
     test('Verify user is on home page', async ({ homePage }) => {
@@ -76,6 +77,23 @@ test.describe('Home Page Tests for Plum Goodness', () => {
         await productDetailsPage.userClicksOnAddToCartButton();
         await productDetailsPage.verifyCartQuantityIsEqualTo('1');
     });
+
+    test('Verify user can science backed solutions container in home page', async ({ homePage }) => {
+        await homePage.verifyUserIsOnHomePage();
+        await homePage.verifyScienceBackedSolutionsContainerIsVisibleWithText('science-backed solutions for');
+    });
+
+    test('Verify user can add science backed solutions product to cart', async ({ homePage, productsPage, productDetailsPage }) => {
+        await homePage.verifyUserIsOnHomePage();
+        await homePage.verifyScienceBackedSolutionsContainerIsVisibleWithText('science-backed solutions for');
+        await homePage.userClicksOnScienceBackedSolutionsProduct();
+        await productsPage.verifyUserIsOnScienceBackedProductsPage();
+        await productsPage.userClickOnFirstScienceBackedProduct();
+        await productDetailsPage.verifyUserIsOnProductDetailsPage();
+        await productDetailsPage.userClicksOnAddToCartButton();
+        await productDetailsPage.verifyCartQuantityIsEqualTo('1');
+    });
+
 
 
 
