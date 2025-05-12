@@ -1,0 +1,22 @@
+{
+  "name": "abdencapstoneprojectust",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbdenFernandez/AbdenCapstoneProjectUST.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AbdenFernandez/AbdenCapstoneProjectUST/issues"
+  },
+  "homepage": "https://github.com/AbdenFernandez/AbdenCapstoneProjectUST#readme",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.15.17"
+  }
+}
