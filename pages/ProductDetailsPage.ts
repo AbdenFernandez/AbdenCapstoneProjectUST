@@ -15,6 +15,7 @@ export class ProductDetailsPage{
     }
 
     async verifyUserIsOnProductDetailsPage(){
+        await this.page.waitForLoadState('domcontentloaded');
         await expect(this.productTitle).toBeVisible();
     }
 

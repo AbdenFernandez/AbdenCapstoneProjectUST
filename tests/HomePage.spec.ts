@@ -1,9 +1,14 @@
 import { test, expect } from '../fixtures/plum.fixtures.ts';
+import { captureAndAttachFullPageScreenshot } from '../utils/Screenshot.util.ts';
 
 test.describe('Home Page Tests for Plum Goodness', () => {
-    test.beforeEach(async ({ homePage, iframePopUp }) => {
+    test.beforeEach(async ({ homePage }) => {
         await homePage.userNavigatesToHomePage();
-        await iframePopUp.closePopupIframes();
+        await homePage.closeAnyPopups(4);
+    });
+
+    test.afterEach(async ({ page }, testInfo) => {
+        await captureAndAttachFullPageScreenshot(page, testInfo);
     });
 
     test('Verify user is on home page', async ({ homePage }) => {
@@ -23,6 +28,12 @@ test.describe('Home Page Tests for Plum Goodness', () => {
     test('Verify home page title', async ({ homePage }) => {
         await homePage.verifyUserIsOnHomePage();
         await homePage.verifyHomePageHasTitle(/Science-Backed Skincare, Haircare & Body care \| 100% vegan\s*– Plum/);
+    });
+
+    test('Verify user can view offers container in home page', async ({ homePage }) => {
+        await homePage.verifyUserIsOnHomePage();
+        await homePage.verifyOffersContainerIsVisible();
+
     });
 
     test('Verify user can navigate to products page', async ({ homePage, productsPage }) => {
@@ -93,8 +104,6 @@ test.describe('Home Page Tests for Plum Goodness', () => {
         await productDetailsPage.userClicksOnAddToCartButton();
         await productDetailsPage.verifyCartQuantityIsEqualTo('1');
     });
-
-
 
 
 });

@@ -6,16 +6,18 @@ import { expect } from '../fixtures/plum.fixtures.ts';
 export class LoginPage {
 
     private readonly page: Page;
-    private readonly frameLocator: FrameLocator;
+    private readonly frameLocators: FrameLocator;
+
 
     constructor(page: Page) {
         this.page = page;
-        this.frameLocator = page.frameLocator('#iframe-kp');
+        this.frameLocators = page.frameLocator('#iframe-kp');
+
 
     }
 
     async verifyUserIsOnLoginPage(){
-        await expect(this.frameLocator.locator('#phone-input')).toBeVisible();
+        await expect(this.frameLocators.locator('#phone-input')).toBeVisible();
         
     }
 

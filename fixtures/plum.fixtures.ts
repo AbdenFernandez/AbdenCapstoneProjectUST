@@ -1,5 +1,4 @@
 import { test as base, expect, BrowserContext, Page } from '@playwright/test';
-import { IframePopUp } from '../utils/iframePopUp.util.ts';
 import { LoginPage } from '../pages/LoginPage.ts';
 import { HomePage } from '../pages/HomePage.ts';
 import { ProductsPage } from '../pages/ProductsPage.ts';
@@ -11,7 +10,6 @@ import { ProductDetailsPage } from '../pages/ProductDetailsPage.ts';
 
 
 type PlumFixtures = {
-    iframePopUp: IframePopUp;
     loginPage: LoginPage;
     homePage: HomePage;
     productsPage: ProductsPage;
@@ -28,10 +26,6 @@ export const test = base.extend<PlumFixtures>({
         const homePage = new HomePage(page);
         await homePage.userNavigatesToHomePage();
         await use(homePage);
-    },
-    iframePopUp: async ({ page }, use) => {
-        const iframePopUp = new IframePopUp(page);
-        await use(iframePopUp);
     },
     loginPage: async ({ page }, use) => {
         const loginPage = new LoginPage(page);

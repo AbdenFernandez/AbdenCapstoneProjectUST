@@ -7,6 +7,7 @@ export class HomePage {
     private readonly logo: Locator;
     private readonly userIcon: Locator;
     private readonly searchInput: Locator;
+    private readonly offersContainer: Locator;
     private readonly trendingProducts: Locator;
     private readonly bestOfPlumsProduct: Locator;
     private readonly routineEssentialsProduct: Locator;
@@ -20,7 +21,8 @@ export class HomePage {
         this.page = page;
         this.logo = page.locator('.logo__link');
         this.userIcon = page.locator('#kp-login-button-header-logo');
-        this.searchInput = page.locator('//div[@id="search-desktop"]//input[@name="st"]')
+        this.searchInput = page.locator('//div[@id="search-desktop"]//input[@name="st"]');
+        this.offersContainer = page.locator('#game-template--17970905415740__image_offer_banner_dwwwGd a img');
         this.trendingProducts = page.getByText('best of plums');
         this.bestOfPlumsProduct = page.locator('a.card-link.text-current.js-prod-link');
         this.spotlightRoutineContainer = page.locator('h2.h4.mb-0.flex-auto.section__heading.text-start');
@@ -33,11 +35,53 @@ export class HomePage {
 
     async userNavigatesToHomePage() {
         await this.page.goto('/');
+        await this.page.waitForLoadState();
     }
 
+    async closeAnyPopups(retries: number){
+        await this.page.waitForLoadState();
+        const popupSelectors = [
+            {
+                iframeId: '#iframe-kp',
+                closeSelector: '#close_button'
+            },
+            {
+                iframeId: '#preview-notification-frame-58',
+                closeSelector: '.smt-close.smt-close-icon.nxt-blank-state-close.close-icon-right'
+            }
+            
+            
+        ];
+    
+        for (const { iframeId, closeSelector } of popupSelectors) {
+            try {
+                const iframeHandle = await this.page.waitForSelector(iframeId, {
+                    timeout: 5000, 
+                    state: 'attached'
+                });
+    
+                if (iframeHandle) {
+                    const frame = await iframeHandle.contentFrame();
+                    if (frame) {
+                        const closeButton = await frame.waitForSelector(closeSelector, {
+                            timeout: 3000,
+                            state: 'visible'
+                        });
+                        if (closeButton) {
+                            await closeButton.click();
+                            console.log(`Popup closed for ${iframeId}`);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log(`No popup found for ${iframeId}`);
+            }
+        }
+    }
+    
 
     async verifyUserIsOnHomePage() {
-        await expect(this.logo).toBeVisible();
+        await expect(this.offersContainer.nth(1)).toBeVisible();
     }
 
     async verifyLogoIsDisplayed() {
@@ -47,6 +91,9 @@ export class HomePage {
     async userNavigatesToLoginPage() {
         await this.userIcon.click();
 
+    }
+    async verifyOffersContainerIsVisible() {
+        await expect(this.offersContainer.nth(1)).toBeVisible();
     }
 
     async verifyHomePageHasTitle(title: RegExp) {
