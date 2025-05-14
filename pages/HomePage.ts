@@ -38,7 +38,7 @@ export class HomePage {
         await this.page.waitForLoadState();
     }
 
-    async closeAnyPopups(retries: number){
+    async closeAnyPopups(){
         await this.page.waitForLoadState();
         const popupSelectors = [
             {
@@ -77,6 +77,7 @@ export class HomePage {
                 console.log(`No popup found for ${iframeId}`);
             }
         }
+        await this.logo.hover();
     }
     
 

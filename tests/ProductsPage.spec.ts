@@ -4,7 +4,7 @@ import { captureAndAttachFullPageScreenshot } from '../utils/Screenshot.util.ts'
 test.describe('Product Page Tests for Plum Goodness', () => {
     test.beforeEach(async ({ homePage }) => {
         await homePage.userNavigatesToHomePage();
-        await homePage.closeAnyPopups(4);
+        await homePage.closeAnyPopups();
     });
 
     test.afterEach(async ({ page }, testInfo) => {
@@ -97,7 +97,7 @@ test.describe('Product Page Tests for Plum Goodness', () => {
         await productsPage.verifyPriceIsVisible(/Price/);
     });
 
-    test('Verify user can access the price functionality in products page', async ({ homePage, productsPage }) => {
+    test('Verify user can access the Price functionality in products page', async ({ homePage, productsPage }) => {
         await homePage.verifyUserIsOnHomePage();
         await homePage.userSearchesForAProduct('Vitamin C Serum');
         await productsPage.verifyUserIsOnProductsPage();
@@ -105,6 +105,46 @@ test.describe('Product Page Tests for Plum Goodness', () => {
         await productsPage.verifyPriceIsVisible(/Price/);
         await productsPage.userChoosePrice(499);
         await productsPage.verifySearchedProductsContainPriceLessThan(499);
-
     });
+
+    test('Verify sort box is visible in products page', async ({ homePage, productsPage }) => {
+        await homePage.verifyUserIsOnHomePage();
+        await homePage.userSearchesForAProduct('Vitamin C Serum');
+        await productsPage.verifyUserIsOnProductsPage();
+        await productsPage.verifySearchedProductContainsSearchTerm('Serum');
+        await productsPage.verifySortBoxIsVisible();
+    });
+    
+    test('Validate Price is sorted in ascending order in products page', async ({ homePage, productsPage }) => {
+        await homePage.verifyUserIsOnHomePage();
+        await homePage.userSearchesForAProduct('Vitamin C Serum');
+        await productsPage.verifyUserIsOnProductsPage();
+        await productsPage.verifySearchedProductContainsSearchTerm('Serum');
+        await productsPage.verifySortBoxIsVisible();
+        await productsPage.userClickOnAscendingSort();
+        await productsPage.verifyPriceIsSortedInAscendingOrder();
+    });
+
+    test('Validate Price is sorted in descending order in products page', async ({ homePage, productsPage }) => {
+        await homePage.verifyUserIsOnHomePage();
+        await homePage.userSearchesForAProduct('Vitamin C Serum');
+        await productsPage.verifyUserIsOnProductsPage();
+        await productsPage.verifySearchedProductContainsSearchTerm('Serum');
+        await productsPage.verifySortBoxIsVisible();
+        await productsPage.userClickOnDescendingSort();
+        await productsPage.verifyPriceIsSortedInDescendingOrder();
+    });
+
+    test('Verify user can clear Shop by filter', async ({ homePage, productsPage }) => {
+        await homePage.verifyUserIsOnHomePage();
+        await homePage.userSearchesForAProduct('Vitamin C Serum');
+        await productsPage.verifyUserIsOnProductsPage();
+        await productsPage.verifySearchedProductContainsSearchTerm('Serum');
+        await productsPage.userChooseAproductType('Face Serum');
+        await productsPage.verifySearchedProductContainsSearchTerm('Face Serum');
+        await homePage.closeAnyPopups();
+        await productsPage.userClickOnClearShopByFilter();
+        await productsPage.verifySearchedProductContainsSearchTerm('Serum');
+    });
+
 });

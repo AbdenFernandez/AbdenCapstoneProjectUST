@@ -9,11 +9,16 @@ export class ProductsPage {
     private readonly scienceBackedProducts: Locator;
     private readonly searchInput: Locator;
     private readonly searchedProductTitle: Locator;
+    private readonly products: Locator
     private readonly filterTags: Locator;
     private readonly shopBy: Locator;
     private readonly productTypeAndConcern: Locator;
     private readonly priceRange: Locator;
     private readonly productPagePriceList: Locator;
+    private readonly sortBox: Locator;
+    private readonly sortAscending: Locator;
+    private readonly sortDescending: Locator;
+    private readonly clear: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -23,17 +28,23 @@ export class ProductsPage {
         this.scienceBackedProducts = page.locator('.js-pagination-result');
         this.searchInput = page.locator('//div[@id="search-desktop"]//input[@name="st"]');
         this.searchedProductTitle = page.locator('div.st-product-name a span');
+        //this.products = page.locator('div.st-w-full.st-h-auto.st-product-image.st-block.st-group.st-relative');
+        this.products =page.locator('.card-link.text-current.js-prod-link');
         this.filterTags = page.locator('span.filter-tags');
-        this.shopBy = page.locator('div.st-sidebar-content.st-relative div h3.st-widget-title');
-
+        this.shopBy = page.locator('div.main-products-grid__filters div.st-sidebar div.st-sidebar-content.st-relative div h3.st-widget-title');
+        this.sortBox = page.locator('div.st-toolbox.st-hidden div.st-sort-dropdown');
         this.productTypeAndConcern = page.locator('span.st-leading-normal');
         this.priceRange = page.locator("(//li[@class='st-py-[0px] st-w-full st-m-0 st-block st-pl-0 st-overflow-hidden']//span[3])");
         this.productPagePriceList = page.locator("//span[@class='new-price money st-pr-[2px] !st-font-normal st-text-[#000000] st-tracking-[0px] st-text-[12px] sm:!st-text-[18px] sm:!st-leading-[27px] st-tracking-[0px]']");
+        this.sortAscending = page.locator("//div[contains(@class,'st-toolbox st-hidden ')]//div[contains(@class,'st-sort-dropdown')]//ul/li/span[contains(text(),'Price: Low to High')]");
+        this.sortDescending = page.locator("//div[contains(@class,'st-toolbox st-hidden ')]//div[contains(@class,'st-sort-dropdown')]//ul/li/span[contains(text(),'Price: High to Low')]");
+        this.clear = page.locator('div.st-sidebar-content.st-relative div h3.st-widget-title span.filter-clear');
     }
 
     async verifyUserIsOnProductsPage() {
         await this.page.waitForLoadState('domcontentloaded');
-        await expect(this.showingResultsBlock).toBeVisible();
+        await this.logo.hover();
+        await expect(this.shopBy.first()).toBeVisible();
     }
 
     async verifyUserIsOnScienceBackedProductsPage() {
@@ -41,6 +52,12 @@ export class ProductsPage {
     }
     async userClickOnFirstScienceBackedProduct() {
         await this.scienceBackedProducts.first().click();
+    }
+    async userClickOnFirstProduct(){
+        await this.page.waitForLoadState('domcontentloaded');
+        await this.logo.hover();
+        await expect(this.products.first()).toBeVisible();
+        await this.products.first().click();
     }
 
     async userSearchesForAProduct(searchTerm: string) {
@@ -154,7 +171,8 @@ export class ProductsPage {
                 const text = await element.textContent();
                 if (text) {
                     const priceText = text.trim();
-                    const priceNumber = parseFloat(priceText.replace(/[^0-9.]/g, ''));
+                    const priceNumber = parseFloat(priceText.replace(/[^0-9.,]/g, '').replace(',', ''));
+
                     if (priceNumber <= price) {
                         console.log(`Actual price ${priceNumber} is less than or equal to ${price}`);
                         return;
@@ -162,6 +180,92 @@ export class ProductsPage {
                 }
             }
         }
-        
     }
+
+    async verifySortBoxIsVisible() {
+        await expect(this.sortBox).toBeVisible();
+    }
+
+    async userClickOnAscendingSort(){
+        await this.sortBox.click();
+        await expect(this.sortAscending).toBeVisible();
+        await this.sortAscending.click();
+    }
+    async verifyPriceIsSortedInAscendingOrder(): Promise<void> {
+        await this.page.waitForLoadState('domcontentloaded');
+    
+        const count = await this.productPagePriceList.count();
+        const prices: number[] = [];
+    
+        for (let i = 0; i < count; i++) {
+            const element = this.productPagePriceList.nth(i);
+            if (await element.isVisible()) {
+                const text = await element.textContent();
+                if (text) {
+                    const priceText = text.trim();
+                    const priceNumber = parseFloat(priceText.replace(/[^0-9.]/g, ''));
+                    prices.push(priceNumber);
+                }
+            }
+        }
+        console.log('Prices are :', prices);
+    
+        for (let i = 1; i < prices.length; i++) {
+            if (prices[i] < prices[i - 1]) {
+                const errorMessage = `Prices are not sorted in ascending order. Price at index ${i} (${prices[i]}) is less than next price at index ${i - 1} (${prices[i - 1]}).`;
+                console.error(errorMessage);
+                return Promise.reject(errorMessage); // Use Promise rejection instead of throw
+            }
+        }
+    
+        console.log('Prices are sorted in ascending order:', prices);
+        return Promise.resolve();
+    }
+    
+    async userClickOnDescendingSort(){
+        await this.sortBox.click();
+        await expect(this.sortDescending).toBeVisible();
+        await this.sortDescending.click();
+    }
+    async verifyPriceIsSortedInDescendingOrder(): Promise<void> {
+        await this.page.waitForLoadState('domcontentloaded');
+    
+        const count = await this.productPagePriceList.count();
+        const prices: number[] = [];
+    
+        for (let i = 0; i < count; i++) {
+            const element = this.productPagePriceList.nth(i);
+            if (await element.isVisible()) {
+                const text = await element.textContent();
+                if (text) {
+                    const priceText = text.trim();
+                    const priceNumber = parseFloat(priceText.replace(/[^0-9.]/g, ''));
+                    prices.push(priceNumber);
+                }
+            }
+        }
+        
+
+        console.log('Prices are :', prices);
+    
+        for (let i = 0; i < prices.length - 1; i++) {
+            if (prices[i] < prices[i + 1]) {
+                const errorMessage = `Prices are not sorted in descending order. Price at index ${i+1} (${prices[i+1]}) is greater than next price at index ${i} (${prices[i]}).`;
+                console.error(errorMessage);
+                return Promise.reject(errorMessage); // Use Promise rejection instead of throw
+            }
+        }
+    
+        console.log('Prices are sorted in descending order:', prices);
+        return Promise.resolve();
+    
+    }
+
+    async userClickOnClearShopByFilter(){
+        await this.page.waitForLoadState('domcontentloaded');
+        await expect(this.clear.first()).toBeVisible();
+        await this.clear.first().click();
+    }
+    
+    
 }

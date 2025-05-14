@@ -4,7 +4,7 @@ import { captureAndAttachFullPageScreenshot } from '../utils/Screenshot.util.ts'
 test.describe('Home Page Tests for Plum Goodness', () => {
     test.beforeEach(async ({ homePage }) => {
         await homePage.userNavigatesToHomePage();
-        await homePage.closeAnyPopups(4);
+        await homePage.closeAnyPopups();
     });
 
     test.afterEach(async ({ page }, testInfo) => {
