@@ -16,11 +16,12 @@ export class HomePage {
     private readonly newLaunchesProduct: Locator;
     private readonly scienceBackedSolutionsContainer: Locator;
     private readonly scienceBackedSolutionsProduct: Locator;
+    private readonly orderHistory: Locator;
 
     constructor(page: Page) {
         this.page = page;
         this.logo = page.locator('.logo__link');
-        this.userIcon = page.locator('#kp-login-button-header-logo');
+        this.userIcon = page.locator('div.header--icon div ');
         this.searchInput = page.locator('//div[@id="search-desktop"]//input[@name="st"]');
         this.offersContainer = page.locator('#game-template--17970905415740__image_offer_banner_dwwwGd a img');
         this.trendingProducts = page.getByText('best of plums');
@@ -31,6 +32,7 @@ export class HomePage {
         this.newLaunchesProduct = page.locator('div.section.new_launches carousel-slider div div div ul li product-card div a img');
         this.scienceBackedSolutionsContainer = page.locator('div.section.defeat-one div div h2.h4.mb-0.flex-auto.section__heading.text-center');
         this.scienceBackedSolutionsProduct = page.locator('div.section.defeat-one carousel-slider div div div ul li div div img');
+        this.orderHistory = page.getByText('Order History');
     }
 
     async userNavigatesToHomePage() {
@@ -89,9 +91,19 @@ export class HomePage {
         await expect(this.logo).toBeVisible();
     }
 
-    async userNavigatesToLoginPage() {
-        await this.userIcon.click();
+    async userClicksOnProfileIcon() {
+        await this.userIcon.first().isVisible();
+        await this.userIcon.first().click();
 
+    }
+
+    async userClicksOnLoginIcon() {
+        await this.userIcon.nth(1).isVisible();
+        await this.userIcon.nth(1).click();
+
+    }
+    async userClickOrderHistory(){
+        await this.orderHistory.click();
     }
     async verifyOffersContainerIsVisible() {
         await expect(this.offersContainer.nth(1)).toBeVisible();

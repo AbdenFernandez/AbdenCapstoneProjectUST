@@ -43,6 +43,10 @@ export const test = base.extend<PlumFixtures>({
         const cartPage = new CartPage(page);
         await use(cartPage);
     },
+    profilePage: async ({ page }, use) => {
+        const profilePage = new ProfilePage(page);
+        await use(profilePage);
+    },
 });
 
 export { expect } from '@playwright/test';

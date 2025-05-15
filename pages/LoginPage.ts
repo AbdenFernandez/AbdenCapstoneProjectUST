@@ -1,5 +1,6 @@
 import { FrameLocator, Locator, Page } from '@playwright/test';
 import { expect } from '../fixtures/plum.fixtures.ts'; 
+import { HomePage } from './HomePage.ts';
 
 
 
@@ -32,7 +33,7 @@ export class LoginPage {
     }
 
     async userEntersOTP(){
-        await this.page.waitForTimeout(10000);
+        await this.page.waitForTimeout(15000);
     }
 
     async verifyOtpFieldIsVisible(){

@@ -23,6 +23,24 @@ test.describe('Product Page Tests for Plum Goodness', () => {
         await productsPage.verifyUserIsOnProductsPage();
         await productsPage.verifyProductPageHasTitle(/plumgoodness.com/);
     });
+    [
+        {
+            'searchTerm': 'Vitamin C Serum'
+        },
+        {
+            'searchTerm': 'Vitamin C Facewash'
+        },
+        {
+            'searchTerm': 'Plum Vitamin C Serum'
+        }
+    ].forEach(async ({ searchTerm }) => {
+        test(`Verify user can search for a particular product - ${searchTerm}`, async ({ homePage, productsPage }) => {
+            await homePage.verifyUserIsOnHomePage();
+            await homePage.userSearchesForAProduct(searchTerm);
+            await productsPage.verifyUserIsOnProductsPage();
+            await productsPage.verifySearchedProductContainsSearchTerm(searchTerm);
+        });
+    });
 
     test('Verify user can search for a particular product', async ({ homePage, productsPage }) => {
         await homePage.verifyUserIsOnHomePage();

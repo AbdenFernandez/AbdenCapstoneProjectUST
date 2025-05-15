@@ -21,7 +21,7 @@ test.describe('Home Page Tests for Plum Goodness', () => {
 
     test('Verify user can navigate to login page', async ({ homePage, loginPage }) => {
         await homePage.verifyUserIsOnHomePage();
-        await homePage.userNavigatesToLoginPage();
+        await homePage.userClicksOnProfileIcon();
         await loginPage.verifyUserIsOnLoginPage();
     });
 

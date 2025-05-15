@@ -14,20 +14,20 @@ test.describe('Cart Page Tests for Plum Goodness', () => {
 
     test('Verify user is on Login Page', async ({ homePage, loginPage }) => {
         await homePage.verifyUserIsOnHomePage();
-        await homePage.userNavigatesToLoginPage();
+        await homePage.userClicksOnProfileIcon();
         await loginPage.verifyUserIsOnLoginPage();
     });
 
     test('Verify login page has title', async ({ homePage, loginPage }) => {
         await homePage.verifyUserIsOnHomePage();
-        await homePage.userNavigatesToLoginPage();
+        await homePage.userClicksOnProfileIcon();
         await loginPage.verifyUserIsOnLoginPage();
         await loginPage.verifyLoginPageHasTitle();
     });
 
     test('Verify user can login successfully with valid credentials', async ({ homePage, loginPage }) => {
         await homePage.verifyUserIsOnHomePage();
-        await homePage.userNavigatesToLoginPage();
+        await homePage.userClicksOnProfileIcon();
         await loginPage.verifyUserIsOnLoginPage();
         await loginPage.userEntersValidCredentials(8330029511);
         await loginPage.userEntersOTP();
@@ -47,7 +47,7 @@ test.describe('Cart Page Tests for Plum Goodness', () => {
     ].forEach(({ phoneNumber }) => {
         test(`Verify user can login with invalid credentials - phoneNumber: ${phoneNumber}`, async ({ homePage, loginPage }) => {
             await homePage.verifyUserIsOnHomePage();
-            await homePage.userNavigatesToLoginPage();
+            await homePage.userClicksOnProfileIcon();
             await loginPage.verifyUserIsOnLoginPage();
             await loginPage.userEntersValidCredentials(phoneNumber);
             await loginPage.verifyOtpFieldIsVisible(); // Assuming a method to verify login failure
@@ -68,7 +68,7 @@ test.describe('Cart Page Tests for Plum Goodness', () => {
     ].forEach(({ phoneNumber }) => {
         test(`Verify user cannot login with invalid credentials - phoneNumber: ${phoneNumber}`, async ({ homePage, loginPage }) => {
             await homePage.verifyUserIsOnHomePage();
-            await homePage.userNavigatesToLoginPage();
+            await homePage.userClicksOnProfileIcon();
             await loginPage.verifyUserIsOnLoginPage();
             await loginPage.userEntersValidCredentials(phoneNumber);
             await loginPage.verifyOtpFieldIsNotVisible(); // Assuming a method to verify login failure
