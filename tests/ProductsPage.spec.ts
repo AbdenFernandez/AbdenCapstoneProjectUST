@@ -104,6 +104,7 @@ test.describe('Product Page Tests for Plum Goodness', () => {
         await productsPage.verifySearchedProductContainsSearchTerm('Vitamin C');
         await productsPage.verifyPriceIsVisible(/Price/);
         await productsPage.userChoosePrice(499);
+        await homePage.closeAnyPopups();
         await productsPage.verifySearchedProductsContainPriceLessThan(499);
     });
 

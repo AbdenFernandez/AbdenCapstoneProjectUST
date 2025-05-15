@@ -20,6 +20,12 @@ export class ProductDetailsPage{
     private readonly submitReview: Locator;
     private readonly ratings: Locator;
     private readonly reviewConfirmation: Locator;
+    private readonly pincodeInput: Locator;
+    private readonly expectedDeliveryDate: Locator;
+    private readonly likeReview: Locator;
+    private readonly likeCount: Locator;
+    private readonly dislikeReview: Locator;
+    private readonly dislikeCount: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -40,6 +46,12 @@ export class ProductDetailsPage{
         this.submitReview = page.locator('.jdgm-btn.jdgm-btn--solid.jdgm-submit-rev ');
         this.ratings = page.locator('span.jdgm-form__rating a');
         this.reviewConfirmation = page.locator('.jdgm-notification__title');
+        this.pincodeInput = page.locator('(//input[@class="pincode_input check-delivery-pincode"])[1]');
+        this.expectedDeliveryDate = page.locator('(//div//p[@class="expected"]/br)[1]');
+        this.likeReview = page.locator('span.jdgm-rev__thumb-btn.jdgm-rev_thumb-up');
+        this.likeCount = page.locator('span.jdgm-rev__thumb-count.jdgm-rev_thump-up-count');
+        this.dislikeReview = page.locator('span.jdgm-rev__thumb-btn.jdgm-rev_thumb-down');
+        this.dislikeCount = page.locator('span.jdgm-rev__thumb-count.jdgm-rev_thump-down-count');
     }
 
     async verifyUserIsOnProductDetailsPage(){
@@ -118,5 +130,57 @@ export class ProductDetailsPage{
     }
     async verifyReviewSubmittedSuccessfully(){
         await expect(this.reviewConfirmation).toBeVisible();
+    }
+
+    async userEntersPincode(pincode: string){
+        await expect(this.pincodeInput).toBeVisible();
+        await this.pincodeInput.fill(pincode);
+        await this.pincodeInput.press('Enter');
+    }
+
+    async verifyExpectedDeliverDateIsVisible(){
+        await expect(this.expectedDeliveryDate).toBeHidden()
+    }
+
+    private previousLikeCount: number | null = null;
+
+    async userLikesReview() {
+        await expect(this.likeReview.first()).toBeVisible();
+        await expect(this.likeCount.first()).toBeVisible();
+        const previousLikeCountText = await this.likeCount.first().textContent();
+        this.previousLikeCount = previousLikeCountText !== null ? parseInt(previousLikeCountText.trim(), 10) : null;
+        await this.likeReview.first().click();
+        await this.page.waitForLoadState('domcontentloaded');
+    }
+
+    async verifyReviewLikedSuccessfully() {
+        const currentLikeCountText = await this.likeCount.first().textContent();
+        const currentLikeCount = currentLikeCountText !== null ? parseInt(currentLikeCountText.trim(), 10) : null;
+        if (this.previousLikeCount !== null && currentLikeCount !== null) {
+            await expect(currentLikeCount).toBeGreaterThan(this.previousLikeCount);
+        } else {
+            throw new Error('Unable to verify like count due to missing data');
+        }
+    }
+
+    private prevDisLikeCount: number | null = null;
+
+    async userDislikesReview() {
+        await expect(this.dislikeReview.first()).toBeVisible();
+        await expect(this.dislikeCount.first()).toBeVisible();
+        const previousDisLikeCountText = await this.dislikeCount.first().textContent();
+        this.prevDisLikeCount = previousDisLikeCountText !== null ? parseInt(previousDisLikeCountText.trim(), 10) : null;
+        await this.dislikeReview.first().click();
+        await this.page.waitForLoadState('domcontentloaded');
+    }
+
+    async verifyReviewDislikedSuccessfully() {
+        const currentDisLikeCountText = await this.dislikeCount.first().textContent();
+        const currentDisLikeCount = currentDisLikeCountText !== null ? parseInt(currentDisLikeCountText.trim(), 10) : null;
+        if (this.prevDisLikeCount !== null && currentDisLikeCount !== null) {
+            await expect(currentDisLikeCount).toBeGreaterThan(this.prevDisLikeCount);
+        } else {
+            throw new Error('Unable to verify like count due to missing data');
+        }
     }
 }

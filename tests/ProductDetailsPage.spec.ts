@@ -7,10 +7,14 @@ test.describe('Product Details Page Tests for Plum Goodness', () => {
         await homePage.userNavigatesToHomePage();
         await homePage.closeAnyPopups();
         await homePage.verifyUserIsOnHomePage();
-        await homePage.userSearchesForAProduct('Vitamin C Serum');
+        await homePage.userSearchesForAProduct('Facewash');
         await productsPage.verifyUserIsOnProductsPage();
         await homePage.closeAnyPopups();
 
+    });
+
+    test.afterEach(async ({ page }, testInfo) => {
+        await captureAndAttachFullPageScreenshot(page, testInfo);
     });
 
     test('Verify user is on Product Details Page', async ({ productsPage, productDetailsPage }) => {
@@ -80,11 +84,23 @@ test.describe('Product Details Page Tests for Plum Goodness', () => {
         {
             'reviewtitle': 'I love this product',
             'reviewtext': 'I love this product. It is amazing. I am very satisfied with the product.',
-            'name': 'John Abden Doe',
-            'email': 'johnabdendoe@gmail.com'
+            'name': 'Abden next',
+            'email': 'antonyabdene@gmail.com'
+        },
+        {
+            'reviewtitle': 'I  dont love this product',
+            'reviewtext': 'I love this product. It is amazing. I am very satisfied with the product.',
+            'name': 'Abden',
+            'email': 'abdenan@gmail.com'
+        },
+        {
+            'reviewtitle': 'I love this product',
+            'reviewtext': 'I love this product. It is amazing. I am very satisfied with the product.',
+            'name': 'Abden',
+            'email': 'abdenfer@gmail.com'
         }
     ].forEach(async ({ reviewtitle, reviewtext, name, email }) => {
-        test('Verify user can write a review in product details page', async ({ homePage, productsPage, productDetailsPage }) => {
+        test(`Verify user can write reviews for (${reviewtitle}, ${name}, ${email}) in product details page`, async ({ homePage, productsPage, productDetailsPage }) => {
             await productsPage.userClickOnFirstProduct();
             await productDetailsPage.verifyUserIsOnProductDetailsPage();
             await productDetailsPage.verifyProductDetailsPageHasTitle(/Plum/);
@@ -106,6 +122,30 @@ test.describe('Product Details Page Tests for Plum Goodness', () => {
 
     });
 
+    test('Verify user can like a review in product details page', async ({ homePage, productsPage, productDetailsPage }) => {
+        await productsPage.userClickOnFirstProduct();
+        await productDetailsPage.verifyUserIsOnProductDetailsPage();
+        await productDetailsPage.verifyProductDetailsPageHasTitle(/Plum/);
+        await productDetailsPage.userClicksOnReviews();
+        await homePage.closeAnyPopups();
+        await productDetailsPage.verifyUserIsOnReviewsSection();
+        await productDetailsPage.userLikesReview();
+        await homePage.closeAnyPopups();
+        await productDetailsPage.verifyReviewLikedSuccessfully();
+    });
 
+    test('Verify user can dislike a review in product details page', async ({ homePage, productsPage, productDetailsPage }) => {
+        await productsPage.userClickOnFirstProduct();
+        await productDetailsPage.verifyUserIsOnProductDetailsPage();
+        await productDetailsPage.verifyProductDetailsPageHasTitle(/Plum/);
+        await productDetailsPage.userClicksOnReviews();
+        await homePage.closeAnyPopups();
+        await productDetailsPage.verifyUserIsOnReviewsSection();
+        await productDetailsPage.userDislikesReview();
+        await homePage.closeAnyPopups();
+        await productDetailsPage.verifyReviewDislikedSuccessfully();
+    });
+
+    
 
 });
