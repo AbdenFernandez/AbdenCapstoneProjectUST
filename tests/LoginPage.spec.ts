@@ -71,7 +71,7 @@ test.describe('Login Page Tests for Plum Goodness', () => {
             await homePage.userClicksOnProfileIcon();
             await loginPage.verifyUserIsOnLoginPage();
             await loginPage.userEntersValidCredentials(phoneNumber);
-            await loginPage.verifyOtpFieldIsNotVisible(); // Assuming a method to verify login failure
+            await loginPage.verifyOtpFieldIsNotVisible();
         });
     });
 
