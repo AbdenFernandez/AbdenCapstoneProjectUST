@@ -2,7 +2,7 @@ import { test, expect } from '../fixtures/plum.fixtures.ts';
 import { captureAndAttachFullPageScreenshot } from '../utils/Screenshot.util.ts';
 
 
-test.describe('Cart Page Tests for Plum Goodness', () => {
+test.describe('Login Page Tests for Plum Goodness', () => {
     test.beforeEach(async ({ homePage, productsPage }) => {
         await homePage.userNavigatesToHomePage();
         await homePage.closeAnyPopups();

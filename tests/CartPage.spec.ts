@@ -1,5 +1,4 @@
 import { test, expect } from '../fixtures/plum.fixtures.ts';
-import { ProductDetailsPage } from '../pages/ProductDetailsPage.ts';
 import { captureAndAttachFullPageScreenshot } from '../utils/Screenshot.util.ts';
 
 
