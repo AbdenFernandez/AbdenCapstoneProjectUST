@@ -24,7 +24,7 @@ export class ProductsPage {
     private readonly clear: Locator;
     private readonly addToCartButton: Locator;
     private readonly cartIcon: Locator;
-    private readonly cartQuantity: Locator;
+    readonly cartQuantity: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -54,7 +54,7 @@ export class ProductsPage {
 
     async verifyUserIsOnProductsPage() {
         await this.page.waitForLoadState('domcontentloaded');
-    
+
         await this.logo.hover();
         await this.page.waitForTimeout(1000);
         await expect(this.shopBy.first()).toBeVisible();
@@ -90,17 +90,17 @@ export class ProductsPage {
     async verifySearchedProductContainsSearchTerm(searchTerm: string) {
         const homePage = new HomePage(this.page);
         await homePage.closeAnyPopups();
-    
+
         const selectors = [
             '.card-link.text-current.js-prod-link',
             'a.st-title span'
         ];
-    
+
         const visibleTitles: string[] = [];
-    
+
         for (const selector of selectors) {
             const elements = this.page.locator(selector);
-    
+
             // Wait for at least one matching element of this type to be visible (if any)
             const count = await elements.count();
             for (let i = 0; i < count; i++) {
@@ -113,12 +113,12 @@ export class ProductsPage {
                 }
             }
         }
-    
+
         // Match titles to search term
         const matched = visibleTitles.filter(title =>
             title.toLowerCase().includes(searchTerm.toLowerCase())
         );
-    
+
         if (matched.length === 0) {
             await this.page.screenshot({ path: 'no-match.png', fullPage: true });
             throw new Error(
@@ -127,8 +127,8 @@ export class ProductsPage {
         }
         await expect(matched.length).toBeGreaterThan(0);
     }
-    
-    
+
+
 
 
 
@@ -156,9 +156,9 @@ export class ProductsPage {
 
     async userChooseAproductType(productType: string) {
         await this.logo.hover();
-    
+
         const productTypeElements = await this.productTypeAndConcern.all();
-    
+
         for (const element of productTypeElements) {
             if (await element.isVisible()) {
                 const text = (await element.textContent())?.trim().toLowerCase() || '';
@@ -168,10 +168,10 @@ export class ProductsPage {
                 }
             }
         }
-    
+
         throw new Error(`Visible product type with text "${productType}" not found.`);
     }
-    
+
 
     async verifyShopByConcernIsVisible(concernString: RegExp) {
         await expect(this.shopBy.nth(1)).toBeVisible();
@@ -208,8 +208,9 @@ export class ProductsPage {
         await this.shopBy.nth(2).click();
         let concernElements: Locator[];
         if (await this.priceRange.first().isVisible()) {
-            concernElements = await this.priceRange.all();}
-        else{
+            concernElements = await this.priceRange.all();
+        }
+        else {
             concernElements = await this.priceRangeTwo.all();
         }
         for (const element of concernElements) {
@@ -340,8 +341,12 @@ export class ProductsPage {
     }
 
     async userClicksOnCartIcon() {
-        await this.cartIcon.isVisible();
-        await this.cartIcon.click();
+        if (await this.cartIcon.isVisible()) {
+            await this.cartIcon.click();
+        }
+        else {
+            await this.cartQuantity.click();
+        }
     }
 
     async verifyCartQuantityIsEqualTo(quantity: string): Promise<void> {

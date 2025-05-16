@@ -1,0 +1,42 @@
+name: Cart Page Test
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  playwright-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Install static server & wait-on
+        run: npm install --no-save serve wait-on
+
+      - name: Start local server & wait for it
+        run: |
+          npx serve ./src -p 5500 &
+          npx wait-on http://127.0.0.1:5500
+
+      - name: Run Cart Page Test
+        run: npx playwright test tests/CartPage.spec.ts
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cartpage-report
+          path: blob-report
