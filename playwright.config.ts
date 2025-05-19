@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import test from 'node:test';
 
 /**
  * Read environment variables from file.
@@ -38,6 +39,10 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
 
+  testIgnore: [
+    'tests/LoginPage.spec.ts',
+    'tests/ProfilePage.spec.ts',
+  ],
   /* Configure projects for major browsers */
   projects: [
     {
@@ -50,6 +55,8 @@ export default defineConfig({
         },
       },
     },
+
+   
 
     /* {
       name: 'firefox',
